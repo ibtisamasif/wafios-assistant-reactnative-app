@@ -1,6 +1,7 @@
 import {
   Alert,
   BackHandler,
+  Image,
   Linking,
   PermissionsAndroid,
   Platform,
@@ -10,21 +11,25 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+// import Icon from 'react-native-vector-icons/FontAwesome';
 import React, {Component} from 'react';
 import {
   TwilioVideo,
   TwilioVideoLocalView,
   TwilioVideoParticipantView,
 } from 'react-native-twilio-video-webrtc';
+import {height, totalSize, width} from 'react-native-dimension';
 
-// import {Icon} from 'react-native-elements';
+import {Icon} from 'react-native-elements';
+import Modal from 'react-native-modal';
 import {PERMISSIONS} from 'react-native-permissions';
 import {checkMultiplePermissions} from '../Utils/index';
 import colors from '../../Themes/Colors';
 import {getToken} from '../../backend/AxiosApi';
-import {totalSize} from 'react-native-dimension';
+import images from '../../Themes/Images';
+import type from '../../Themes/Fonts';
 
-class Home extends Component {
+export default class Home extends Component {
   state = {
     enableCamera: true,
     isAudioEnabled: true,
@@ -36,6 +41,7 @@ class Home extends Component {
     token: '',
     callId: '',
     name: 'John Smith',
+    isModalVisible: true,
   };
 
   async checkForPermissions() {
@@ -143,7 +149,10 @@ class Home extends Component {
       // const id = route.match(/\/([^\/]+)\/?$/)[1];
       const routeName = route.split('?')[0];
       console.log('rootName', routeName);
-      if (routeName === 'assistant.connectavo.com' || routeName === 'assistant.connectavo.com/') {
+      if (
+        routeName === 'assistant.connectavo.com' ||
+        routeName === 'assistant.connectavo.com/'
+      ) {
         var calid = this.getParameterByName('callId', url);
         console.log('id', calid);
         this.setState({callId: calid});
@@ -241,35 +250,201 @@ class Home extends Component {
     this.twilioRef = ref;
   };
 
+  toggleModal = () => {
+    this.setState({isModalVisible: !this.state.isModalVisible});
+  };
+
   render() {
     return (
       <View style={styles.container}>
-        {this.state.status === 'disconnected' && (
-          <View>
-            <Text style={styles.welcome}>Join a call by ID</Text>
-            <TextInput
-              placeholder="e.g 234 432 234"
-              placeholderTextColor="gray"
-              style={styles.input}
-              autoCapitalize="none"
-              value={this.state.callId}
-              onChangeText={text => this.setState({callId: text})}
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="e.g John Smith"
-              placeholderTextColor="gray"
-              autoCapitalize="none"
-              value={this.state.name}
-              onChangeText={text => this.setState({name: text})}
-            />
-            <TouchableOpacity
-              title="JOIN CALL"
-              style={styles.joinCallButton}
-              onPress={() => this.onGetTokenFunc()}>
-              <Text style={styles.joinCallText}>JOIN CALL </Text>
-            </TouchableOpacity>
+        <Modal
+          isVisible={this.state.isModalVisible}
+          onBackdropPress={this.toggleModal}>
+          <View
+            style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+            <View
+              style={{
+                width: Platform.OS == 'ios' ? totalSize(32) : totalSize(36),
+                backgroundColor: colors.snow,
+                borderRadius: totalSize(0.5),
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+              <View
+                style={{
+                  width: Platform.OS == 'ios' ? totalSize(7.5) : totalSize(8.5),
+                  height:
+                    Platform.OS == 'ios' ? totalSize(7.5) : totalSize(8.5),
+                  borderRadius:
+                    Platform.OS == 'ios'
+                      ? totalSize(7.5) / 2
+                      : totalSize(8.5) / 2,
+                  backgroundColor: colors.snow,
+                  position: 'absolute',
+                  top: -totalSize(4),
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                <View
+                  style={{
+                    width: Platform.OS == 'ios' ? totalSize(7) : totalSize(8),
+                    height: Platform.OS == 'ios' ? totalSize(7) : totalSize(8),
+                    borderRadius:
+                      Platform.OS == 'ios'
+                        ? totalSize(7) / 2
+                        : totalSize(8) / 2,
+                    backgroundColor: colors.redColor,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}>
+                  <Icon
+                    name="close"
+                    type="font-awesome"
+                    size={totalSize(5)}
+                    color={colors.snow}
+                  />
+                </View>
+              </View>
+              <Text
+                style={{
+                  fontSize: totalSize(2.8),
+                  marginHorizontal: totalSize(4.5),
+                  marginTop: totalSize(4.5),
+                  textAlign: 'center',
+                  color: colors.coal,
+                }}>
+                Call ID can't be empty
+              </Text>
+              <Text
+                style={{
+                  fontSize: totalSize(1.9),
+                  marginHorizontal: totalSize(3),
+                  marginTop: totalSize(1.5),
+                  color: colors.charcoal,
+                }}>
+                Please enter a valid call ID
+              </Text>
+
+              <TouchableOpacity
+                onPress={this.toggleModal}
+                style={{
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  width: Platform.OS == 'ios' ? totalSize(28) : totalSize(32),
+                  marginVertical: totalSize(1.4),
+                  paddingVertical: totalSize(0.8),
+                  borderRadius: totalSize(0.5),
+                  backgroundColor: colors.redColor,
+                }}>
+                <Text
+                  style={{
+                    fontSize: totalSize(2.2),
+                    color: colors.snow,
+                  }}>
+                  Done
+                </Text>
+              </TouchableOpacity>
+            </View>
           </View>
+        </Modal>
+
+        {this.state.status === 'disconnected' && (
+          <>
+            <View style={styles.upper}>
+              <Image
+                style={{
+                  height: Platform.OS == 'ios' ? height(6.5) : height(7.5),
+                  width: Platform.OS == 'ios' ? width(68) : width(70),
+                  resizeMode: 'contain',
+                  marginTop: totalSize(4),
+                }}
+                source={images.logo}
+              />
+              <View style={styles.iconParent}>
+                <Icon
+                  // style= {{}}
+                  name="flip-camera-ios"
+                  type="MaterialIcons"
+                  size={totalSize(3.7)}
+                  onPress={() => alert('icon pressed')}
+                  color={colors.snow}
+                />
+              </View>
+
+              <View
+                style={{
+                  position: 'absolute',
+                  bottom: totalSize(2),
+                  flexDirection: 'row',
+                  justifyContent: 'space-around',
+                }}>
+                <View style={styles.bottomIconParent}>
+                  <Icon
+                    name="video-camera"
+                    type="entypo"
+                    size={totalSize(3.6)}
+                    onPress={() => alert('video camera pressed')}
+                    color={colors.snow}
+                  />
+                </View>
+                <View style={styles.bottomIconParent}>
+                  <Icon
+                    name="microphone"
+                    type="font-awesome"
+                    size={totalSize(3.6)}
+                    onPress={() => alert('microphone pressed')}
+                    color={colors.snow}
+                  />
+                </View>
+                <View style={styles.bottomIconParent}>
+                  <Icon
+                    name="pencil"
+                    type="entypo"
+                    size={totalSize(3.6)}
+                    onPress={() => alert('pencil draw pressed')}
+                    color={colors.snow}
+                  />
+                </View>
+                <View
+                  style={[
+                    styles.bottomIconParent,
+                    {backgroundColor: colors.redColor},
+                  ]}>
+                  <Icon
+                    name="call-end"
+                    type="SimpleLineIcons"
+                    size={totalSize(3.7)}
+                    onPress={this.toggleModal}
+                    color={colors.snow}
+                  />
+                </View>
+              </View>
+            </View>
+            <View style={styles.bottom}>
+              <Text style={styles.welcome}>Join a call by ID</Text>
+              <View
+                style={{
+                  width: width(100),
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  paddingHorizontal: totalSize(3),
+                }}>
+                <TextInput
+                  placeholder="e.g 234 432 234"
+                  placeholderTextColor={colors.steel}
+                  style={styles.input}
+                  autoCapitalize="none"
+                  value={this.state.callId}
+                  onChangeText={text => this.setState({callId: text})}
+                />
+                <TouchableOpacity
+                  style={styles.joinCallButton}
+                  onPress={() => this.onGetTokenFunc()}>
+                  <Text style={styles.joinCallText}>JOIN CALL </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </>
         )}
 
         {this.state.status === 'connected' ||
@@ -353,37 +528,31 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   welcome: {
-    fontSize: 30,
-    textAlign: 'center',
-    paddingTop: 40,
+    fontSize: totalSize(3.2),
+    margin: totalSize(2.5),
+    color: 'grey',
+    // textAlign: 'center',
+    // paddingTop: 40,
   },
   input: {
-    height: 50,
-    marginRight: 70,
-    marginLeft: 70,
-    marginTop: 50,
+    //  marginLeft: totalSize(2),
     textAlign: 'center',
     backgroundColor: 'white',
     borderBottomColor: colors.Green,
     borderBottomWidth: 2,
+    fontSize: totalSize(2.5),
   },
   joinCallButton: {
-    width: 190,
-    height: 60,
-    marginLeft: 110,
-    marginTop: 100,
+    // alignSelf: 'flex-end',
+    width: width(37),
+    paddingVertical: totalSize(1.4),
     backgroundColor: colors.Green,
-    paddingTop: 20,
-    paddingBottom: 20,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: '#fff',
-    alignItems: 'center',
     justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 5,
   },
   joinCallText: {
     color: '#fff',
-    textAlign: 'center',
   },
   localVideo: {
     flex: 0,
@@ -445,6 +614,41 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  bottom: {
+    flex: Platform.OS == 'ios' ? 2.4 : 2.6,
+    alignItems: 'flex-start',
+  },
+  upper: {
+    flex: 7.2,
+    backgroundColor: colors.black,
+    alignItems: 'center',
+  },
+  circle: {
+    width: totalSize(3),
+    height: totalSize(3),
+    backgroundColor: 'white',
+    borderRadius: totalSize(3 / 2),
+    marginTop: totalSize(1),
+    marginLeft: totalSize(0.1),
+  },
+  iconParent: {
+    height: totalSize(6.5),
+    width: totalSize(6.5),
+    borderRadius: totalSize(6.5 / 2),
+    backgroundColor: colors.charcoalLow,
+    alignSelf: 'flex-end',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: totalSize(2.5),
+    // marginTop: totalSize(1),
+  },
+  bottomIconParent: {
+    height: totalSize(6.5),
+    width: totalSize(6.5),
+    borderRadius: totalSize(6.5 / 2),
+    backgroundColor: colors.coalLow,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginHorizontal: totalSize(1.5),
+  },
 });
-
-export default Home;
