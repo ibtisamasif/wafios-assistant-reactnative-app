@@ -1,33 +1,32 @@
 import {
   Alert,
   BackHandler,
-  Image,
   Linking,
   PermissionsAndroid,
   Platform,
   StyleSheet,
   Text,
+  Image,
   TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
+import {Icon} from 'react-native-elements';
+import Modal from 'react-native-modal';
 // import Icon from 'react-native-vector-icons/FontAwesome';
 import React, {Component} from 'react';
+import images from '../../Themes/Images';
+import type from '../../Themes/Fonts';
 import {
   TwilioVideo,
   TwilioVideoLocalView,
   TwilioVideoParticipantView,
 } from 'react-native-twilio-video-webrtc';
-import {height, totalSize, width} from 'react-native-dimension';
-
-import {Icon} from 'react-native-elements';
-import Modal from 'react-native-modal';
 import {PERMISSIONS} from 'react-native-permissions';
 import {checkMultiplePermissions} from '../Utils/index';
 import colors from '../../Themes/Colors';
 import {getToken} from '../../backend/AxiosApi';
-import images from '../../Themes/Images';
-import type from '../../Themes/Fonts';
+import {height, totalSize, width} from 'react-native-dimension';
 
 export default class Home extends Component {
   state = {
@@ -351,25 +350,36 @@ export default class Home extends Component {
         {this.state.status === 'disconnected' && (
           <>
             <View style={styles.upper}>
+              <TwilioVideoLocalView
+                enabled={this.state.enableCamera}
+                style={{width: '100%', height: '100%'}}
+              />
               <Image
                 style={{
                   height: Platform.OS == 'ios' ? height(6.5) : height(7.5),
                   width: Platform.OS == 'ios' ? width(68) : width(70),
                   resizeMode: 'contain',
-                  marginTop: totalSize(4),
+                  position: 'absolute',
+                  top: totalSize(4),
                 }}
                 source={images.logo}
               />
-              <View style={styles.iconParent}>
-                <Icon
-                  // style= {{}}
-                  name="flip-camera-ios"
-                  type="MaterialIcons"
-                  size={totalSize(3.7)}
-                  onPress={() => alert('icon pressed')}
-                  color={colors.snow}
+              <TouchableOpacity
+                onPress={this._onFlipButtonPress}
+                style={[
+                  styles.iconParent,
+                  {
+                    position: 'absolute',
+                    right: totalSize(1),
+                    top: totalSize(11),
+                  },
+                ]}>
+                <Image
+                  style={styles.iconImage}
+                  tintColor={colors.snow}
+                  source={images.cameraFlip}
                 />
-              </View>
+              </TouchableOpacity>
 
               <View
                 style={{
@@ -378,46 +388,28 @@ export default class Home extends Component {
                   flexDirection: 'row',
                   justifyContent: 'space-around',
                 }}>
-                <View style={styles.bottomIconParent}>
-                  <Icon
-                    name="video-camera"
-                    type="entypo"
-                    size={totalSize(3.6)}
-                    onPress={() => alert('video camera pressed')}
-                    color={colors.snow}
+                <TouchableOpacity
+                  onPress={this._onCameraButtonPress}
+                  style={styles.bottomIconParent}>
+                  <Image
+                    style={[styles.iconImage]}
+                    tintColor={colors.snow}
+                    source={
+                      this.state.enableCamera ? images.video : images.videMute
+                    }
                   />
-                </View>
-                <View style={styles.bottomIconParent}>
-                  <Icon
-                    name="microphone"
-                    type="font-awesome"
-                    size={totalSize(3.6)}
-                    onPress={() => alert('microphone pressed')}
-                    color={colors.snow}
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={this._onMuteButtonPress}
+                  style={styles.bottomIconParent}>
+                  <Image
+                    style={[styles.iconImage]}
+                    tintColor={colors.snow}
+                    source={
+                      this.state.isAudioEnabled ? images.mic : images.micMute
+                    }
                   />
-                </View>
-                <View style={styles.bottomIconParent}>
-                  <Icon
-                    name="pencil"
-                    type="entypo"
-                    size={totalSize(3.6)}
-                    onPress={() => alert('pencil draw pressed')}
-                    color={colors.snow}
-                  />
-                </View>
-                <View
-                  style={[
-                    styles.bottomIconParent,
-                    {backgroundColor: colors.redColor},
-                  ]}>
-                  <Icon
-                    name="call-end"
-                    type="SimpleLineIcons"
-                    size={totalSize(3.7)}
-                    onPress={this.toggleModal}
-                    color={colors.snow}
-                  />
-                </View>
+                </TouchableOpacity>
               </View>
             </View>
             <View style={styles.bottom}>
@@ -471,34 +463,61 @@ export default class Home extends Component {
                 enabled={this.state.enableCamera}
                 style={styles.localVideo}
               />
+              <TouchableOpacity
+                onPress={this._onFlipButtonPress}
+                style={[styles.iconParent, styles.flipCamera]}>
+                <Image
+                  style={styles.iconImage}
+                  tintColor={colors.snow}
+                  source={images.cameraFlip}
+                />
+              </TouchableOpacity>
               <View style={styles.optionsContainer}>
                 <TouchableOpacity
-                  style={styles.optionButton}
-                  onPress={this._onFlipButtonPress}>
-                  <Text style={{fontSize: 12}}>Flip</Text>
+                  onPress={this._onCameraButtonPress}
+                  style={styles.bottomIconParent}>
+                  <Image
+                    style={[styles.iconImage]}
+                    tintColor={colors.snow}
+                    source={
+                      this.state.enableCamera ? images.video : images.videMute
+                    }
+                  />
                 </TouchableOpacity>
                 <TouchableOpacity
-                  style={styles.optionButton}
-                  onPress={this._onMuteButtonPress}>
-                  <Text style={{fontSize: 12}}>
-                    {this.state.isAudioEnabled ? 'Mute' : 'Unmute'}
-                  </Text>
+                  onPress={this._onMuteButtonPress}
+                  style={styles.bottomIconParent}>
+                  <Image
+                    style={styles.iconImage}
+                    tintColor={colors.snow}
+                    source={
+                      this.state.isAudioEnabled ? images.mic : images.micMute
+                    }
+                  />
                 </TouchableOpacity>
+
                 <TouchableOpacity
-                  style={styles.optionButton}
-                  onPress={this._onCameraButtonPress}>
-                  <Text style={{fontSize: 12}}>Annotate</Text>
+                  onPress={this._onCameraButtonPress}
+                  style={styles.bottomIconParent}>
+                  <Image
+                    style={styles.iconImage}
+                    tintColor={colors.snow}
+                    source={images.draw}
+                  />
                 </TouchableOpacity>
+
                 <TouchableOpacity
-                  style={styles.endButton}
-                  onPress={this._onEndButtonPress}>
-                  {/* <Icon
-                    name="staro"
-                    type="antdesign"
-                    size={totalSize(3)}
-                    color="white"
-                  /> */}
-                  <Text style={{fontSize: 12}}>End</Text>
+                  onPress={this._onEndButtonPress}
+                  style={[
+                    styles.bottomIconParent,
+                    {backgroundColor: colors.redColor},
+                  ]}>
+                  <Icon
+                    name="call-end"
+                    type="SimpleLineIcons"
+                    size={totalSize(3.5)}
+                    color={colors.snow}
+                  />
                 </TouchableOpacity>
                 <View />
               </View>
@@ -557,11 +576,12 @@ const styles = StyleSheet.create({
   localVideo: {
     flex: 0,
     flexDirection: 'row-reverse',
-    width: 160,
-    height: 125,
+    width: totalSize(18),
+    height: totalSize(12),
     position: 'absolute',
-    right: 10,
-    bottom: 600,
+    left: totalSize(1.5),
+    top: totalSize(5),
+    // bottom: 600,
     borderRadius: 2,
     borderColor: '#4e4e4e',
   },
@@ -583,6 +603,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  flipCamera: {
+    position: 'absolute',
+    top: totalSize(5),
+    right: totalSize(1),
   },
   optionButton: {
     width: 60,
@@ -620,7 +645,6 @@ const styles = StyleSheet.create({
   },
   upper: {
     flex: 7.2,
-    backgroundColor: colors.black,
     alignItems: 'center',
   },
   circle: {
@@ -632,9 +656,9 @@ const styles = StyleSheet.create({
     marginLeft: totalSize(0.1),
   },
   iconParent: {
-    height: totalSize(6.5),
-    width: totalSize(6.5),
-    borderRadius: totalSize(6.5 / 2),
+    height: totalSize(6),
+    width: totalSize(6),
+    borderRadius: totalSize(6 / 2),
     backgroundColor: colors.charcoalLow,
     alignSelf: 'flex-end',
     alignItems: 'center',
@@ -643,12 +667,18 @@ const styles = StyleSheet.create({
     // marginTop: totalSize(1),
   },
   bottomIconParent: {
-    height: totalSize(6.5),
-    width: totalSize(6.5),
-    borderRadius: totalSize(6.5 / 2),
+    height: totalSize(6),
+    width: totalSize(6),
+    borderRadius: totalSize(6 / 2),
     backgroundColor: colors.coalLow,
     alignItems: 'center',
     justifyContent: 'center',
     marginHorizontal: totalSize(1.5),
+  },
+  iconImage: {
+    width: totalSize(3),
+    height: totalSize(3),
+    resizeMode: 'contain',
+    tintColor: colors.snow,
   },
 });
