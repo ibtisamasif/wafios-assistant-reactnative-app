@@ -1,32 +1,33 @@
 import {
   Alert,
   BackHandler,
+  Image,
   Linking,
   PermissionsAndroid,
   Platform,
   StyleSheet,
   Text,
-  Image,
   TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
-import {Icon} from 'react-native-elements';
-import Modal from 'react-native-modal';
 // import Icon from 'react-native-vector-icons/FontAwesome';
 import React, {Component} from 'react';
-import images from '../../Themes/Images';
-import type from '../../Themes/Fonts';
 import {
   TwilioVideo,
   TwilioVideoLocalView,
   TwilioVideoParticipantView,
 } from 'react-native-twilio-video-webrtc';
+import {height, totalSize, width} from 'react-native-dimension';
+
+import {Icon} from 'react-native-elements';
+import Modal from 'react-native-modal';
 import {PERMISSIONS} from 'react-native-permissions';
 import {checkMultiplePermissions} from '../Utils/index';
 import colors from '../../Themes/Colors';
 import {getToken} from '../../backend/AxiosApi';
-import {height, totalSize, width} from 'react-native-dimension';
+import images from '../../Themes/Images';
+import type from '../../Themes/Fonts';
 
 export default class Home extends Component {
   state = {
