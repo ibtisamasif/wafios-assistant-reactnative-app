@@ -41,7 +41,7 @@ export default class Home extends Component {
     token: '',
     callId: '',
     name: 'John Smith',
-    isModalVisible: true,
+    isModalVisible: false,
   };
 
   async checkForPermissions() {
@@ -163,7 +163,7 @@ export default class Home extends Component {
   async onGetTokenFunc() {
     const {callId, name} = this.state;
     if (callId === '') {
-      Alert.alert('Call ID can not be empty');
+      this.toggleModal()
     } else {
       this.setState({loading: true});
       let callback = await getToken(callId, name);
