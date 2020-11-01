@@ -31,7 +31,6 @@ import type from '../../Themes/Fonts';
 
 export default class Home extends Component {
   state = {
-    enableCamera: true,
     isAudioEnabled: true,
     isVideoEnabled: true,
     status: 'disconnected',
@@ -40,7 +39,7 @@ export default class Home extends Component {
     roomName: '',
     token: '',
     callId: '',
-    name: 'John Smith',
+    name: 'John' + Math.floor(Math.random() * 100) + 1,
     isModalVisible: false,
   };
 
@@ -56,7 +55,7 @@ export default class Home extends Component {
       // Show an alert in case permission was not granted
       Alert.alert(
         'Permission Request',
-        'Please allow permission to access the Microphone.',
+        'Please allow permission to access the Microphone and Camera.',
         [
           {
             text: 'Go to Settings',
@@ -163,7 +162,7 @@ export default class Home extends Component {
   async onGetTokenFunc() {
     const {callId, name} = this.state;
     if (callId === '') {
-      this.toggleModal()
+      this.toggleModal();
     } else {
       this.setState({loading: true});
       let callback = await getToken(callId, name);
@@ -190,6 +189,10 @@ export default class Home extends Component {
     this.twilioRef.disconnect();
   };
 
+  _onDrawButtonPress = () => {
+    Alert.alert('Coming soon..');
+  };
+
   _onMuteButtonPress = () => {
     this.twilioRef
       .setLocalAudioEnabled(!this.state.isAudioEnabled)
@@ -197,10 +200,9 @@ export default class Home extends Component {
   };
 
   _onCameraButtonPress = () => {
-    this.state.enableCamera
-      ? this.setState({enableCamera: false})
-      : this.setState({enableCamera: true});
-    Alert.alert('Coming soon...');
+    this.twilioRef
+      .setLocalVideoEnabled(!this.state.isVideoEnabled)
+      .then(isEnabled => this.setState({isVideoEnabled: isEnabled}));
   };
 
   _onFlipButtonPress = () => {
@@ -352,7 +354,7 @@ export default class Home extends Component {
           <>
             <View style={styles.upper}>
               <TwilioVideoLocalView
-                enabled={this.state.enableCamera}
+                enabled={true}
                 style={{width: '100%', height: '100%'}}
               />
               <Image
@@ -396,7 +398,7 @@ export default class Home extends Component {
                     style={[styles.iconImage]}
                     tintColor={colors.snow}
                     source={
-                      this.state.enableCamera ? images.video : images.videMute
+                      this.state.isVideoEnabled ? images.video : images.videMute
                     }
                   />
                 </TouchableOpacity>
@@ -450,7 +452,12 @@ export default class Home extends Component {
                   ([trackSid, trackIdentifier]) => {
                     return (
                       <TwilioVideoParticipantView
-                        style={styles.remoteVideo}
+                        style={[
+                          styles.remoteVideo,
+                          {
+                            transform: [{scaleX: -1}],
+                          },
+                        ]}
                         key={trackSid}
                         trackIdentifier={trackIdentifier}
                       />
@@ -461,8 +468,13 @@ export default class Home extends Component {
             )}
             <View>
               <TwilioVideoLocalView
-                enabled={this.state.enableCamera}
-                style={styles.localVideo}
+                enabled={this.state.isVideoEnabled}
+                style={[
+                  styles.localVideo,
+                  {
+                    transform: [{scaleX: -1}],
+                  },
+                ]}
               />
               <TouchableOpacity
                 onPress={this._onFlipButtonPress}
@@ -481,7 +493,7 @@ export default class Home extends Component {
                     style={[styles.iconImage]}
                     tintColor={colors.snow}
                     source={
-                      this.state.enableCamera ? images.video : images.videMute
+                      this.state.isVideoEnabled ? images.video : images.videMute
                     }
                   />
                 </TouchableOpacity>
@@ -498,7 +510,7 @@ export default class Home extends Component {
                 </TouchableOpacity>
 
                 <TouchableOpacity
-                  onPress={this._onCameraButtonPress}
+                  onPress={this._onDrawButtonPress}
                   style={styles.bottomIconParent}>
                   <Image
                     style={styles.iconImage}
@@ -582,9 +594,13 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: totalSize(1.5),
     top: totalSize(5),
-    // bottom: 600,
     borderRadius: 2,
     borderColor: '#4e4e4e',
+  },
+  flipCamera: {
+    position: 'absolute',
+    top: totalSize(5),
+    right: totalSize(1),
   },
   remoteGrid: {
     flex: 1,
@@ -604,11 +620,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  flipCamera: {
-    position: 'absolute',
-    top: totalSize(5),
-    right: totalSize(1),
   },
   optionButton: {
     width: 60,

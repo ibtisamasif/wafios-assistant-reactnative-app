@@ -15,9 +15,9 @@ export default class Splash extends Component {
       this.props.navigation.navigate('App');
       //   this.props.navigation.navigate(userToken ? 'App' : 'Auth');
     }, 2000);
-    if (Platform.OS === 'ios') {
-      Linking.openURL('app-settings:');
-    }
+    // if (Platform.OS === 'ios') {
+    //   Linking.openURL('app-settings:');
+    // }
   };
 
   render() {
