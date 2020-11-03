@@ -446,95 +446,97 @@ export default class Home extends Component {
         this.state.status === 'connecting' ? (
           <View style={styles.callContainer}>
             {this.state.status === 'connected' && (
-              <View style={styles.remoteGrid}>
-                {Array.from(
-                  this.state.videoTracks,
-                  ([trackSid, trackIdentifier]) => {
-                    return (
-                      <TwilioVideoParticipantView
-                        style={[
-                          styles.remoteVideo,
-                          {
-                            transform: [{scaleX: -1}],
-                          },
-                        ]}
-                        key={trackSid}
-                        trackIdentifier={trackIdentifier}
-                      />
-                    );
-                  },
-                )}
+              <View>
+                <View>
+                  {Array.from(
+                    this.state.videoTracks,
+                    ([trackSid, trackIdentifier]) => {
+                      return (
+                        <TwilioVideoParticipantView
+                          style={[
+                            styles.remoteVideo,
+                            {
+                              transform: [{scaleX: -1}],
+                            },
+                          ]}
+                          key={trackSid}
+                          trackIdentifier={trackIdentifier}
+                        />
+                      );
+                    },
+                  )}
+                </View>
+                <TwilioVideoLocalView
+                  enabled={this.state.isVideoEnabled}
+                  style={[
+                    styles.localVideo,
+                    {
+                      transform: [{scaleX: -1}],
+                    },
+                  ]}
+                />
+                <TouchableOpacity
+                  onPress={this._onFlipButtonPress}
+                  style={[styles.iconParent, styles.flipCamera]}>
+                  <Image
+                    style={styles.iconImage}
+                    tintColor={colors.snow}
+                    source={images.cameraFlip}
+                  />
+                </TouchableOpacity>
+                <View style={styles.optionsContainer}>
+                  <TouchableOpacity
+                    onPress={this._onCameraButtonPress}
+                    style={styles.bottomIconParent}>
+                    <Image
+                      style={[styles.iconImage]}
+                      tintColor={colors.snow}
+                      source={
+                        this.state.isVideoEnabled
+                          ? images.video
+                          : images.videMute
+                      }
+                    />
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={this._onMuteButtonPress}
+                    style={styles.bottomIconParent}>
+                    <Image
+                      style={styles.iconImage}
+                      tintColor={colors.snow}
+                      source={
+                        this.state.isAudioEnabled ? images.mic : images.micMute
+                      }
+                    />
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    onPress={this._onDrawButtonPress}
+                    style={styles.bottomIconParent}>
+                    <Image
+                      style={styles.iconImage}
+                      tintColor={colors.snow}
+                      source={images.draw}
+                    />
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    onPress={this._onEndButtonPress}
+                    style={[
+                      styles.bottomIconParent,
+                      {backgroundColor: colors.redColor},
+                    ]}>
+                    <Icon
+                      name="call-end"
+                      type="SimpleLineIcons"
+                      size={totalSize(3.5)}
+                      color={colors.snow}
+                    />
+                  </TouchableOpacity>
+                  <View />
+                </View>
               </View>
             )}
-            <View>
-              <TwilioVideoLocalView
-                enabled={this.state.isVideoEnabled}
-                style={[
-                  styles.localVideo,
-                  {
-                    transform: [{scaleX: -1}],
-                  },
-                ]}
-              />
-              <TouchableOpacity
-                onPress={this._onFlipButtonPress}
-                style={[styles.iconParent, styles.flipCamera]}>
-                <Image
-                  style={styles.iconImage}
-                  tintColor={colors.snow}
-                  source={images.cameraFlip}
-                />
-              </TouchableOpacity>
-              <View style={styles.optionsContainer}>
-                <TouchableOpacity
-                  onPress={this._onCameraButtonPress}
-                  style={styles.bottomIconParent}>
-                  <Image
-                    style={[styles.iconImage]}
-                    tintColor={colors.snow}
-                    source={
-                      this.state.isVideoEnabled ? images.video : images.videMute
-                    }
-                  />
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={this._onMuteButtonPress}
-                  style={styles.bottomIconParent}>
-                  <Image
-                    style={styles.iconImage}
-                    tintColor={colors.snow}
-                    source={
-                      this.state.isAudioEnabled ? images.mic : images.micMute
-                    }
-                  />
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  onPress={this._onDrawButtonPress}
-                  style={styles.bottomIconParent}>
-                  <Image
-                    style={styles.iconImage}
-                    tintColor={colors.snow}
-                    source={images.draw}
-                  />
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  onPress={this._onEndButtonPress}
-                  style={[
-                    styles.bottomIconParent,
-                    {backgroundColor: colors.redColor},
-                  ]}>
-                  <Icon
-                    name="call-end"
-                    type="SimpleLineIcons"
-                    size={totalSize(3.5)}
-                    color={colors.snow}
-                  />
-                </TouchableOpacity>
-                <View />
-              </View>
-            </View>
           </View>
         ) : null}
 
