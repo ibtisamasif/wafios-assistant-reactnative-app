@@ -38,7 +38,7 @@ export default class Home extends Component {
     videoTracks: new Map(),
     roomName: '',
     token: '',
-    callId: '',
+    callId: '196-800-704',
     name: 'John' + Math.floor(Math.random() * 100) + 1,
     isModalVisible: false,
   };
@@ -383,7 +383,7 @@ export default class Home extends Component {
                   source={images.cameraFlip}
                 />
               </TouchableOpacity>
-
+              {/* <View style={[styles.remoteVideo, {backgroundColor: 'black'}]} /> */}
               <View
                 style={{
                   position: 'absolute',
@@ -446,97 +446,85 @@ export default class Home extends Component {
         this.state.status === 'connecting' ? (
           <View style={styles.callContainer}>
             {this.state.status === 'connected' && (
-              <View>
-                <View>
-                  {Array.from(
-                    this.state.videoTracks,
-                    ([trackSid, trackIdentifier]) => {
-                      return (
-                        <TwilioVideoParticipantView
-                          style={[
-                            styles.remoteVideo,
-                            {
-                              transform: [{scaleX: -1}],
-                            },
-                          ]}
-                          key={trackSid}
-                          trackIdentifier={trackIdentifier}
-                        />
-                      );
-                    },
-                  )}
-                </View>
-                <TwilioVideoLocalView
-                  enabled={this.state.isVideoEnabled}
-                  style={[
-                    styles.localVideo,
-                    {
-                      transform: [{scaleX: -1}],
-                    },
-                  ]}
+              <View style={[styles.remoteGrid]}>
+                {Array.from(
+                  this.state.videoTracks,
+                  ([trackSid, trackIdentifier]) => {
+                    return (
+                      <TwilioVideoParticipantView
+                        style={styles.remoteVideo}
+                        key={trackSid}
+                        trackIdentifier={trackIdentifier}
+                      />
+                    );
+                  },
+                )}
+              </View>
+            )}
+            <View>
+              <TwilioVideoLocalView
+                enabled={this.state.isVideoEnabled}
+                style={[styles.localVideo]}
+              />
+              <TouchableOpacity
+                onPress={this._onFlipButtonPress}
+                style={[styles.iconParent, styles.flipCamera]}>
+                <Image
+                  style={styles.iconImage}
+                  tintColor={colors.snow}
+                  source={images.cameraFlip}
                 />
+              </TouchableOpacity>
+              <View style={styles.optionsContainer}>
                 <TouchableOpacity
-                  onPress={this._onFlipButtonPress}
-                  style={[styles.iconParent, styles.flipCamera]}>
+                  onPress={this._onCameraButtonPress}
+                  style={styles.bottomIconParent}>
+                  <Image
+                    style={[styles.iconImage]}
+                    tintColor={colors.snow}
+                    source={
+                      this.state.isVideoEnabled ? images.video : images.videMute
+                    }
+                  />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={this._onMuteButtonPress}
+                  style={styles.bottomIconParent}>
                   <Image
                     style={styles.iconImage}
                     tintColor={colors.snow}
-                    source={images.cameraFlip}
+                    source={
+                      this.state.isAudioEnabled ? images.mic : images.micMute
+                    }
                   />
                 </TouchableOpacity>
-                <View style={styles.optionsContainer}>
-                  <TouchableOpacity
-                    onPress={this._onCameraButtonPress}
-                    style={styles.bottomIconParent}>
-                    <Image
-                      style={[styles.iconImage]}
-                      tintColor={colors.snow}
-                      source={
-                        this.state.isVideoEnabled
-                          ? images.video
-                          : images.videMute
-                      }
-                    />
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    onPress={this._onMuteButtonPress}
-                    style={styles.bottomIconParent}>
-                    <Image
-                      style={styles.iconImage}
-                      tintColor={colors.snow}
-                      source={
-                        this.state.isAudioEnabled ? images.mic : images.micMute
-                      }
-                    />
-                  </TouchableOpacity>
 
-                  <TouchableOpacity
-                    onPress={this._onDrawButtonPress}
-                    style={styles.bottomIconParent}>
-                    <Image
-                      style={styles.iconImage}
-                      tintColor={colors.snow}
-                      source={images.draw}
-                    />
-                  </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={this._onDrawButtonPress}
+                  style={styles.bottomIconParent}>
+                  <Image
+                    style={styles.iconImage}
+                    tintColor={colors.snow}
+                    source={images.draw}
+                  />
+                </TouchableOpacity>
 
-                  <TouchableOpacity
-                    onPress={this._onEndButtonPress}
-                    style={[
-                      styles.bottomIconParent,
-                      {backgroundColor: colors.redColor},
-                    ]}>
-                    <Icon
-                      name="call-end"
-                      type="SimpleLineIcons"
-                      size={totalSize(3.5)}
-                      color={colors.snow}
-                    />
-                  </TouchableOpacity>
-                  <View />
-                </View>
+                <TouchableOpacity
+                  onPress={this._onEndButtonPress}
+                  style={[
+                    styles.bottomIconParent,
+                    {backgroundColor: colors.redColor},
+                  ]}>
+                  <Icon
+                    name="call-end"
+                    type="SimpleLineIcons"
+                    size={totalSize(3.5)}
+                    color={colors.snow}
+                  />
+                </TouchableOpacity>
+                <View />
               </View>
-            )}
+            </View>
           </View>
         ) : null}
 
@@ -560,6 +548,12 @@ const styles = StyleSheet.create({
   },
   callContainer: {
     flex: 1,
+    //New
+    position: 'absolute',
+    bottom: 0,
+    top: 0,
+    left: 0,
+    right: 0,
   },
   welcome: {
     fontSize: totalSize(3.2),
@@ -588,27 +582,40 @@ const styles = StyleSheet.create({
   joinCallText: {
     color: '#fff',
   },
-  remoteVideo: {
-    width: totalSize(18),
-    height: totalSize(12),
-    position: 'absolute',
-    left: totalSize(1.5),
-    top: totalSize(5),
-    borderRadius: 2,
-    borderColor: '#4e4e4e',
+  remoteGrid: {
+    flex: 1,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
   },
+  remoteVideo: {
+    marginTop: 20,
+    marginLeft: 10,
+    marginRight: 10,
+    width: 100,
+    height: 120,
+  },
+  // remoteVideo: {
+  //   width: totalSize(18),
+  //   height: totalSize(12),
+  //   position: 'absolute',
+  //   left: totalSize(1.5),
+  //   top: totalSize(5),
+  //   borderRadius: 2,
+  //   borderColor: '#4e4e4e',
+  // },
   flipCamera: {
     position: 'absolute',
     top: totalSize(5),
     right: totalSize(1),
   },
-  remoteGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-  },
+  // remoteGrid: {
+  //   flexDirection: 'row',
+  //   flexWrap: 'wrap',
+  // },
   localVideo: {
     width: '100%',
-    height: '100%',
+    height: '90%',
+    // position: 'absolute',
   },
   optionsContainer: {
     position: 'absolute',
