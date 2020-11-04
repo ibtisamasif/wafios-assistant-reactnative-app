@@ -38,7 +38,7 @@ export default class Home extends Component {
     videoTracks: new Map(),
     roomName: '',
     token: '',
-    callId: '196-800-704',
+    callId: '654-703-652',
     name: 'John' + Math.floor(Math.random() * 100) + 1,
     isModalVisible: false,
   };
@@ -582,18 +582,7 @@ const styles = StyleSheet.create({
   joinCallText: {
     color: '#fff',
   },
-  remoteGrid: {
-    flex: 1,
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-  },
-  remoteVideo: {
-    marginTop: 20,
-    marginLeft: 10,
-    marginRight: 10,
-    width: 100,
-    height: 120,
-  },
+
   // remoteVideo: {
   //   width: totalSize(18),
   //   height: totalSize(12),
@@ -612,10 +601,24 @@ const styles = StyleSheet.create({
   //   flexDirection: 'row',
   //   flexWrap: 'wrap',
   // },
+  remoteGrid: {
+    flex: 1,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+  },
+  remoteVideo: {
+    marginTop: 20,
+    marginLeft: 10,
+    marginRight: 10,
+    width: 100,
+    height: 120,
+    // position: 'absolute',
+  },
   localVideo: {
     width: '100%',
-    height: '90%',
+    height: '70%',
     // position: 'absolute',
+    // top: 100,
   },
   optionsContainer: {
     position: 'absolute',
