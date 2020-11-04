@@ -38,7 +38,7 @@ export default class Home extends Component {
     videoTracks: new Map(),
     roomName: '',
     token: '',
-    callId: '654-703-652',
+    callId: '',
     name: 'John' + Math.floor(Math.random() * 100) + 1,
     isModalVisible: false,
   };
