@@ -588,7 +588,7 @@ const styles = StyleSheet.create({
   joinCallText: {
     color: '#fff',
   },
-  remoteVideo: {
+  localVideo: {
     width: totalSize(18),
     height: totalSize(12),
     position: 'absolute',
@@ -606,7 +606,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
   },
-  localVideo: {
+  remoteVideo: {
     width: '100%',
     height: '100%',
   },
