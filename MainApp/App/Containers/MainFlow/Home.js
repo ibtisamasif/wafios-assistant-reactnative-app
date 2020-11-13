@@ -582,6 +582,7 @@ const styles = StyleSheet.create({
   joinCallText: {
     color: '#fff',
   },
+<<<<<<< HEAD
 
   // remoteVideo: {
   //   width: totalSize(18),
@@ -592,6 +593,17 @@ const styles = StyleSheet.create({
   //   borderRadius: 2,
   //   borderColor: '#4e4e4e',
   // },
+=======
+  localVideo: {
+    width: totalSize(18),
+    height: totalSize(12),
+    position: 'absolute',
+    left: totalSize(1.5),
+    top: totalSize(5),
+    borderRadius: 2,
+    borderColor: '#4e4e4e',
+  },
+>>>>>>> master
   flipCamera: {
     position: 'absolute',
     top: totalSize(5),
@@ -607,6 +619,7 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
   },
   remoteVideo: {
+<<<<<<< HEAD
     marginTop: 20,
     marginLeft: 10,
     marginRight: 10,
@@ -615,6 +628,8 @@ const styles = StyleSheet.create({
     // position: 'absolute',
   },
   localVideo: {
+=======
+>>>>>>> master
     width: '100%',
     height: '70%',
     // position: 'absolute',
