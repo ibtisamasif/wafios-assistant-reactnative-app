@@ -616,7 +616,7 @@ const styles = StyleSheet.create({
   },
   localVideo: {
     width: '100%',
-    height: '70%',
+    height: '90%',
     // position: 'absolute',
     // top: 100,
   },
